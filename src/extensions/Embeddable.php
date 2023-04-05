@@ -132,7 +132,7 @@ class Embeddable extends DataExtension
             )
         );
 
-        if (isset($owner->AllowedEmbedTypes) && Count($owner->AllowedEmbedTypes) > 1) {
+        if (isset($owner->AllowedEmbedTypes) && is_array($owner->AllowedEmbedTypes) && Count($owner->AllowedEmbedTypes) > 1) {
             $fields->addFieldToTab(
                 'Root.' . $tab,
                 ReadonlyField::create(
@@ -153,11 +153,14 @@ class Embeddable extends DataExtension
     {
         $owner = $this->owner;
         if ($sourceURL = $owner->EmbedSourceURL) {
-            $embed = Embed::create($sourceURL);
+            $config = [
+                'choose_bigger_image' => true,
+            ];
+            $embed = Embed::create($sourceURL, $config);
             if ($owner->EmbedTitle == '') {
                 $owner->EmbedTitle = $embed->Title;
             }
-            if (!$owner->EmbedDescription == '') {
+            if ($owner->EmbedDescription == '') {
                 $owner->EmbedDescription = $embed->Description;
             }
             $changes = $owner->getChangedFields();
@@ -170,7 +173,9 @@ class Embeddable extends DataExtension
                 if ($owner->EmbedSourceImageURL != $embed->Image) {
                     $owner->EmbedSourceImageURL = $embed->Image;
                     $fileExplode = explode('.', $embed->Image);
-                    $fileExtension = end($fileExplode);
+                    $fileExtensionExplode = explode('?', end($fileExplode));
+                    $fileExtension = $fileExtensionExplode[0];
+                    $fileExtensionQuery = $fileExtensionExplode[0];
                     $fileName = Convert::raw2url($owner->obj('EmbedTitle')->LimitCharacters(55)) . '.' . $fileExtension;
                     $parentFolder = Folder::find_or_make($owner->EmbedFolder);
 

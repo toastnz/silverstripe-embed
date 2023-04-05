@@ -1,5 +1,5 @@
 {
-  "name": "gorriecoe/silverstripe-embed",
+  "name": "plato-creative/silverstripe-embed",
   "description": "Adds embed and video a dataobject along with dataextension to apply embed to existing objects.",
   "type": "silverstripe-vendormodule",
   "license": "BSD-3-Clause",
@@ -7,6 +7,10 @@
     {
       "name": "Gorrie Coe",
       "email": "gorriecoe@gmail.com"
+    },
+    {
+      "name": "Plato Creative",
+      "email": "web@platocreative.co.nz"
     }
   ],
   "keywords": [
@@ -14,11 +18,17 @@
     "cms",
     "embed"
   ],
-  "homepage": "http://github.com/gorriecoe/silverstripe-embed",
+  "homepage": "http://github.com/PlatoCreative/silverstripe-embed",
   "require": {
     "silverstripe/framework": "^4",
-    "gorriecoe/silverstripe-htmltag": "^1.0"
+    "plato-creative/silverstripe-htmltag": "^1.0"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/PlatoCreative/silverstripe-embed"
+    }
+  ],
   "extra": {
     "installer-name": "embed"
   }
