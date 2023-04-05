@@ -18,7 +18,7 @@
     "cms",
     "embed"
   ],
-  "homepage": "http://github.com/PlatoCreative/silverstripe-embed",
+  "homepage": "https://github.com/PlatoCreative/silverstripe-embed",
   "require": {
     "silverstripe/framework": "^4",
     "plato-creative/silverstripe-htmltag": "^1.0"
