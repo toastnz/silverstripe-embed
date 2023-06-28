@@ -156,23 +156,25 @@ class Embeddable extends DataExtension
             $config = [
                 'choose_bigger_image' => true,
             ];
-            $embed = Embed::create($sourceURL, $config);
+            $embed = new Embed();
+            $info=$embed->get($sourceURL);
+            $oembed = $info->getOEmbed();
             if ($owner->EmbedTitle == '') {
-                $owner->EmbedTitle = $embed->Title;
+                $owner->EmbedTitle = $info->title;
             }
             if ($owner->EmbedDescription == '') {
-                $owner->EmbedDescription = $embed->Description;
+                $owner->EmbedDescription = $info->description;
             }
             $changes = $owner->getChangedFields();
             if (isset($changes['EmbedSourceURL']) && !$owner->EmbedImageID) {
-                $owner->EmbedHTML = $embed->Code;
-                $owner->EmbedType = $embed->Type;
-                $owner->EmbedWidth = $embed->Width;
-                $owner->EmbedHeight = $embed->Height;
-                $owner->EmbedAspectRatio = $embed->AspectRatio;
-                if ($owner->EmbedSourceImageURL != $embed->Image) {
-                    $owner->EmbedSourceImageURL = $embed->Image;
-                    $fileExplode = explode('.', $embed->Image);
+                $owner->EmbedHTML = $info->code->html;
+                $owner->EmbedType = $info->getOEmbed()->get('type');
+                $owner->EmbedWidth = $info->code->width;
+                $owner->EmbedHeight = $info->code->height;
+                $owner->EmbedAspectRatio = $info->code->ratio;
+                if ($owner->EmbedSourceImageURL != $info->image) {
+                    $owner->EmbedSourceImageURL = $info->image;
+                    $fileExplode = explode('.', $info->image);
                     $fileExtensionExplode = explode('?', end($fileExplode));
                     $fileExtension = $fileExtensionExplode[0];
                     $fileExtensionQuery = $fileExtensionExplode[0];
@@ -190,7 +192,7 @@ class Embeddable extends DataExtension
                         // Save image to server
                         $imageObject = Image::create();
                         $imageObject->setFromString(
-                            file_get_contents($embed->Image),
+                            file_get_contents($info->image),
                             $owner->EmbedFolder . '/' . $fileName,
                             null,
                             null,
@@ -203,7 +205,7 @@ class Embeddable extends DataExtension
                     // Check existing for image object or create new
                     $imageObject->ParentID = $parentFolder->ID;
                     $imageObject->Name = $fileName;
-                    $imageObject->Title = $embed->getTitle();
+                    $imageObject->Title = $info->title;
                     $imageObject->OwnerID = (Member::currentUserID() ? Member::currentUserID() : 0);
                     $imageObject->ShowInSearch = false;
                     $imageObject->write();
@@ -232,8 +234,10 @@ class Embeddable extends DataExtension
         $allowed_types = $owner->AllowedEmbedTypes;
         $sourceURL = $owner->EmbedSourceURL;
         if ($sourceURL && isset($allowed_types)) {
-            $embed = Embed::create($sourceURL);
-            if (!in_array($embed->Type, $allowed_types)) {
+            $embed = new Embed();
+            $info=$embed->get($sourceURL);
+            $oembed = $info->getOEmbed();
+            if (!in_array($oembed->get('type'), $allowed_types)) {
                 $string = implode(', ', $allowed_types);
                 $string = (substr($string, -1) == ',') ? substr_replace($string, ' or', -1) : $string;
                 $validationResult->addError(
