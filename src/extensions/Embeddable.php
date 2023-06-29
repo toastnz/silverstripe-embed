@@ -172,9 +172,9 @@ class Embeddable extends DataExtension
                 $owner->EmbedWidth = $info->code->width;
                 $owner->EmbedHeight = $info->code->height;
                 $owner->EmbedAspectRatio = $info->code->ratio;
-                if ($owner->EmbedSourceImageURL != $info->image) {
-                    $owner->EmbedSourceImageURL = $info->image;
-                    $fileExplode = explode('.', $info->image);
+                if ($owner->EmbedSourceImageURL != $info->getOEmbed()->get('thumbnail_url').'.png') {
+                    $owner->EmbedSourceImageURL = $info->getOEmbed()->get('thumbnail_url').'.png';
+                    $fileExplode = explode('.', $info->getOEmbed()->get('thumbnail_url').'.png');
                     $fileExtensionExplode = explode('?', end($fileExplode));
                     $fileExtension = $fileExtensionExplode[0];
                     $fileExtensionQuery = $fileExtensionExplode[0];
@@ -192,7 +192,7 @@ class Embeddable extends DataExtension
                         // Save image to server
                         $imageObject = Image::create();
                         $imageObject->setFromString(
-                            file_get_contents($info->image),
+                            file_get_contents($info->getOEmbed()->get('thumbnail_url').'.png'),
                             $owner->EmbedFolder . '/' . $fileName,
                             null,
                             null,
